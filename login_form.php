@@ -30,3 +30,7 @@
     </div>
 </body>
 </html>
+<?php
+//bikin login form --> (login, register, forgot)
+// main form --> simple html
+?>
