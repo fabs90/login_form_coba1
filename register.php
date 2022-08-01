@@ -37,4 +37,41 @@
 <?php
 //bikin login form --> (login, register, forgot)
 // main form --> simple html
+
+require "connection.php";
+
+if (isset($_POST['kirim'])) {
+    if (!empty($_POST["username"]) and !empty($_POST["password"])) {
+
+        // mencegah sql injection dengan bbrp function bawaan php
+        // Data2 diambil dari inputan user di form
+        $username = mysqli_real_escape_string($connection, $_POST['username']);
+        $password = mysqli_real_escape_string($connection, md5($_POST['password']));
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+
+        // Query ambil semua data di dalam db buat nanti di cek ada yg kena affected ga row nya
+        $result = mysqli_query($connection, "SELECT(username, password, email) FROM login where (username = $username and password = $password) and email = $email");
+
+        // Cek ada berapa row yang sama dari syntax query
+        $num_row = mysqli_num_rows($result);
+
+        // Kalo gaada yg sama data nya
+        if ($num_row = 0) {
+
+            // query sql insert data ke table
+            $sql = mysqli_query($connection, "INSERT INTO login(username, password, email) VALUES('$username', '$password', '$email')");
+
+            if ($sql) {
+                echo "<script type='text/javascript'> alert('Account Successfully created'); document.location.href='register.php';</script>";
+            } else {
+                echo "<script type='text/javascript'> alert('Failed to create account'); document.location.href='register.php';</script>";
+            }
+
+        } else {
+            echo "<script type='text/javascript'> alert('That username/password already exists! Please try again with another.'); document.location.href='register.php';</script>";
+            exit();
+        }
+
+    }
+}
 ?>
