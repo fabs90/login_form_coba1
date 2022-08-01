@@ -50,13 +50,13 @@ if (isset($_POST['kirim'])) {
         $email = mysqli_real_escape_string($connection, $_POST['email']);
 
         // Query ambil semua data di dalam db buat nanti di cek ada yg kena affected ga row nya
-        $result = mysqli_query($connection, "SELECT(username, password, email) FROM login where (username = $username and password = $password) and email = $email");
+        $result = mysqli_query($connection, "SELECT * FROM login where username = '$username' and password = '$password'");
 
         // Cek ada berapa row yang sama dari syntax query
         $num_row = mysqli_num_rows($result);
 
         // Kalo gaada yg sama data nya
-        if ($num_row = 0) {
+        if ($num_row == 0) {
 
             // query sql insert data ke table
             $sql = mysqli_query($connection, "INSERT INTO login(username, password, email) VALUES('$username', '$password', '$email')");

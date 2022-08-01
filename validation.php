@@ -6,12 +6,11 @@ require "connection.php";
 if (isset($_POST["kirim"])) {
     // Jika form username dan password TIDAK kosong
     if (!empty($_POST["username"]) and !empty($_POST["password"])) {
-        // masukan data dari form yg diinput user ke dalam variabel
-        $username = $_POST["username"];
-        $password = $_POST["password"];
+
+        $username = mysqli_real_escape_string($connection, $_POST['username']);
 
         // Query sql
-        $result = mysqli_query($connection, "SELECT * FROM login WHERE username = '$username' and password = '$password' ") or die(mysqli_error($connection));
+        $result = mysqli_query($connection, "SELECT * FROM login WHERE username = '$username'") or die(mysqli_error($connection));
 
         // Cek apakah ada baris data yg sama dengan query
         $numrows = mysqli_num_rows($result);
@@ -25,14 +24,19 @@ if (isset($_POST["kirim"])) {
                 $db_email = $row['email'];
             }
 
+            // masukan data dari form yg diinput user ke dalam variabel
+            $username = mysqli_real_escape_string($connection, $_POST['username']);
+            $password = mysqli_real_escape_string($connection, password_verify($_POST['password'], $db_password));
+
             // Cek apakah data di db sama dengan data di form yg diinput user
-            if ($username == $db_username && $password == $db_password) {
+            if ($username == $db_username and password_verify($password, $db_password)) {
                 // Nyalain session
                 session_start();
                 // Set variabel session username dengan $username
                 $_SESSION['username'] = $username;
                 // Pindah page
                 header("Location:home.php");
+
             }
         } else {
             echo "<script type='text/javascript'> alert('Wrong username/Password!'); document.location.href='login_form.php';</script>";
