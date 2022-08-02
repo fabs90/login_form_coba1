@@ -46,7 +46,7 @@ if (isset($_POST['kirim'])) {
         // mencegah sql injection dengan bbrp function bawaan php
         // Data2 diambil dari inputan user di form
         $username = mysqli_real_escape_string($connection, $_POST['username']);
-        $password = mysqli_real_escape_string($connection, md5($_POST['password']));
+        $password = mysqli_real_escape_string($connection, $_POST['password']);
         $email = mysqli_real_escape_string($connection, $_POST['email']);
 
         // Query ambil semua data di dalam db buat nanti di cek ada yg kena affected ga row nya
@@ -57,6 +57,9 @@ if (isset($_POST['kirim'])) {
 
         // Kalo gaada yg sama data nya
         if ($num_row == 0) {
+
+            // Ubah password yg diinput user jadi hash
+            $password = mysqli_real_escape_string($connection, password_hash($password, PASSWORD_DEFAULT));
 
             // query sql insert data ke table
             $sql = mysqli_query($connection, "INSERT INTO login(username, password, email) VALUES('$username', '$password', '$email')");
