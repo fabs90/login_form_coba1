@@ -1,5 +1,9 @@
 <?php
+if (!isset($_SESSION['username'])) {
+    header("Location:login_form.php");
+}
+
 echo "Ini form Home";
 ?>
 
-<a href="login_form.php">Logout</a>
+<a href="logout.php">Logout</a>
