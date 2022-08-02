@@ -27,7 +27,7 @@ if (isset($_POST["kirim"])) {
             // Start Sesi
             session_start();
             // Declare variabel sesi username
-            $_SESSION['username'] = $username;
+            $_SESSION["username"] = $username;
             // Pindah Halaman ke home
             header("Location:home.php");
         } else {

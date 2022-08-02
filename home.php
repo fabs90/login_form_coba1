@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['username'])) {
-    header("Location:login_form.php");
+if (!isset($_SESSION["username"])) {
+    header("location:login_form.php");
 }
 
 echo "Ini form Home";
