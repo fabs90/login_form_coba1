@@ -21,9 +21,14 @@ if (isset($_POST["kirim"])) {
         $result = mysqli_query($connection, $query);
         $row = mysqli_fetch_assoc($result);
 
+        // Jika password yg diinput user sama dengan password hash di db
+        // Password_verify() dipake buat validasi password_hash
         if (password_verify($password, $row['password'])) {
+            // Start Sesi
             session_start();
+            // Declare variabel sesi username
             $_SESSION['username'] = $username;
+            // Pindah Halaman ke home
             header("Location:home.php");
         } else {
             echo "<script type='text/javascript'> alert('Wrong Username/Password!'); document.location.href='login_form.php';</script>";
