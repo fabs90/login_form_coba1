@@ -1,5 +1,5 @@
 <?php
-echo "Berhasil Login";
+echo "Ini form Home";
 ?>
 
-<p><a href="login_form.php"></a>Logout</p>
+<a href="login_form.php">Logout</a>
