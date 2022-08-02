@@ -4,42 +4,32 @@ require "connection.php";
 
 // Jika apakah tombol button kirim sudah di klik
 if (isset($_POST["kirim"])) {
+
+    // Input data masukan user ke variabel
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
     // Jika form username dan password TIDAK kosong
     if (!empty($_POST["username"]) and !empty($_POST["password"])) {
 
-        $username = mysqli_real_escape_string($connection, $_POST['username']);
+        // Anti sql injection
+        $username = mysqli_real_escape_string($connection, $username);
+        $password = mysqli_real_escape_string($connection, $password);
 
-        // Query sql
-        $result = mysqli_query($connection, "SELECT * FROM login WHERE username = '$username'") or die(mysqli_error($connection));
+        // Query SQL, karena password di hash, maka cari kondisi nya pake username aja
+        $query = "SELECT password FROM login where username ='$username'";
+        $result = mysqli_query($connection, $query);
+        $row = mysqli_fetch_assoc($result);
 
-        // Cek apakah ada baris data yg sama dengan query
-        $numrows = mysqli_num_rows($result);
-
-        // Jika ada baris dari table yg sama
-        if ($numrows > 0) {
-            // Ubah data yg ada di db menjadi assoc array
-            while ($row = mysqli_fetch_array($result)) {
-                $db_username = $row['username'];
-                $db_password = $row['password'];
-                $db_email = $row['email'];
-            }
-
-            // masukan data dari form yg diinput user ke dalam variabel
-            $username = mysqli_real_escape_string($connection, $_POST['username']);
-            $password = mysqli_real_escape_string($connection, password_verify($_POST['password'], $db_password));
-
-            // Cek apakah data di db sama dengan data di form yg diinput user
-            if ($username == $db_username and password_verify($password, $db_password)) {
-                // Nyalain session
-                session_start();
-                // Set variabel session username dengan $username
-                $_SESSION['username'] = $username;
-                // Pindah page
-                header("Location:home.php");
-
-            }
+        if (password_verify($password, $row['password'])) {
+            session_start();
+            $_SESSION['username'] = $username;
+            header("Location:home.php");
         } else {
-            echo "<script type='text/javascript'> alert('Wrong username/Password!'); document.location.href='login_form.php';</script>";
+            echo "<script type='text/javascript'> alert('Wrong Username/Password!'); document.location.href='login_form.php';</script>";
         }
+
+    } else {
+        echo "<script type='text/javascript'> alert('All fields are required!'); document.location.href='login_form.php';</script>";
     }
 }
