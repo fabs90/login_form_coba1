@@ -23,19 +23,24 @@ if (isset($_POST["kirim_login"])) {
         $query = "SELECT password FROM login where username ='$username'";
         $result = mysqli_query($connection, $query);
         $row = mysqli_fetch_assoc($result);
+        $num_row = mysqli_num_rows($result);
 
-        // Jika password yg diinput user sama dengan password hash di db
-        // Password_verify() dipake buat validasi password_hash
-        if (password_verify($password, $row['password'])) {
-            // Start Sesi
-            session_start();
-            // Declare variabel sesi username
-            $_SESSION["username"] = $username;
-            // Pindah Halaman ke home
-            header("Location:home.php");
-            exit();
+        if ($num_row > 0) {
+            // Jika password yg diinput user sama dengan password hash di db
+            // Password_verify() dipake buat validasi password_hash
+            if (password_verify($password, $row['password'])) {
+                // Start Sesi
+                session_start();
+                // Declare variabel sesi username
+                $_SESSION["username"] = $username;
+                // Pindah Halaman ke home
+                header("Location:home.php");
+                exit();
+            } else {
+                $errors["password"] = "Incorrect Email or Password";
+            }
         } else {
-            $errors["password"] = "Incorrect Email or Password";
+            $errors["username"] = "Username not exist! Please sign in first";
         }
 
     } else {
