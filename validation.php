@@ -2,8 +2,11 @@
 // Sambungkan dengan koneksi db di halaman connection
 require "connection.php";
 
+$errors = array();
+
+// (Validasi Tombol Login)
 // Jika apakah tombol button kirim sudah di klik
-if (isset($_POST["kirim"])) {
+if (isset($_POST["kirim_login"])) {
 
     // Input data masukan user ke variabel
     $username = $_POST['username'];
@@ -30,11 +33,51 @@ if (isset($_POST["kirim"])) {
             $_SESSION["username"] = $username;
             // Pindah Halaman ke home
             header("Location:home.php");
+            exit();
         } else {
-            echo "<script type='text/javascript'> alert('Wrong Username/Password!'); document.location.href='login_form.php';</script>";
+            $errors["password"] = "Incorrect Email or Password";
         }
 
     } else {
-        echo "<script type='text/javascript'> alert('All fields are required!'); document.location.href='login_form.php';</script>";
+        $errors["password"] = "Please Fill the required form";
+    }
+}
+
+// (Validasi Tombol Register)
+if (isset($_POST['kirim_regist'])) {
+    if (!empty($_POST["username"]) and !empty($_POST["password"])) {
+
+        // mencegah sql injection dengan bbrp function bawaan php
+        // Data2 diambil dari inputan user di form
+        $username = mysqli_real_escape_string($connection, $_POST['username']);
+        $password = mysqli_real_escape_string($connection, $_POST['password']);
+        $email = mysqli_real_escape_string($connection, $_POST['email']);
+
+        // Query ambil semua data di dalam db buat nanti di cek ada yg kena affected ga row nya
+        $result = mysqli_query($connection, "SELECT * FROM login where email = '$email'");
+
+        // Cek ada berapa row yang sama dari syntax query
+        $num_row = mysqli_num_rows($result);
+
+        // Kalo gaada yg sama data nya
+        if ($num_row == 0) {
+
+            // Ubah password yg diinput user jadi hash
+            $password = mysqli_real_escape_string($connection, password_hash($password, PASSWORD_DEFAULT));
+
+            // query sql insert data ke table
+            $sql = mysqli_query($connection, "INSERT INTO login(username, password, email) VALUES('$username', '$password', '$email')");
+
+            if ($sql) {
+                echo "<script type='text/javascript'> alert('Account Successfully created'); document.location.href='register.php';</script>";
+                exit();
+            } else {
+                $errors["db-error"] = "Failed to Insert Data";
+            }
+
+        } else {
+            $errors["email"] = "Sorry your data have been exist";
+        }
+
     }
 }
