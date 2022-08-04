@@ -1,7 +1,6 @@
 <?php
 // Sambungkan dengan koneksi db di halaman connection
 require "connection.php";
-
 $errors = array();
 
 // (Validasi Tombol Login)
@@ -86,3 +85,5 @@ if (isset($_POST['kirim_regist'])) {
 
     }
 }
+
+// (Validasi tombol)
