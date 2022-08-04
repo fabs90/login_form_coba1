@@ -50,7 +50,7 @@ if (count($errors) > 0) {
             </div>
             <p class="login-register-text">Don't have an account? <a href="register.php">Register</a></p>
             <br>
-            <p class="login-register-text"><a href="register.php">Forgot Password?</a></p>
+            <p class="login-register-text"><a href="forgot_pass_form.php">Forgot Password?</a></p>
         </form>
     </div>
 </body>
