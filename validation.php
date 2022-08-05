@@ -1,4 +1,9 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+require 'phpmailer/src/Exception.php';
+require 'phpmailer/src/PHPMailer.php';
+require 'phpmailer/src/SMTP.php';
+
 // Sambungkan dengan koneksi db di halaman connection
 require "connection.php";
 $errors = array();
@@ -54,11 +59,10 @@ if (isset($_POST['kirim_regist'])) {
         // mencegah sql injection dengan bbrp function bawaan php
         // Data2 diambil dari inputan user di form
         $username = mysqli_real_escape_string($connection, $_POST['username']);
-        $password = mysqli_real_escape_string($connection, $_POST['password']);
         $email = mysqli_real_escape_string($connection, $_POST['email']);
 
         // Query ambil semua data di dalam db buat nanti di cek ada yg kena affected ga row nya
-        $result = mysqli_query($connection, "SELECT * FROM login where email = '$email'");
+        $result = mysqli_query($connection, "SELECT * FROM login where username = '$username' and email = '$email'");
 
         // Cek ada berapa row yang sama dari syntax query
         $num_row = mysqli_num_rows($result);
@@ -67,7 +71,7 @@ if (isset($_POST['kirim_regist'])) {
         if ($num_row == 0) {
 
             // Ubah password yg diinput user jadi hash
-            $password = mysqli_real_escape_string($connection, password_hash($password, PASSWORD_DEFAULT));
+            $password = mysqli_real_escape_string($connection, password_hash($_POST["password"], PASSWORD_DEFAULT));
 
             // query sql insert data ke table
             $sql = mysqli_query($connection, "INSERT INTO login(username, password, email) VALUES('$username', '$password', '$email')");
@@ -86,4 +90,59 @@ if (isset($_POST['kirim_regist'])) {
     }
 }
 
-// (Validasi tombol)
+// (Validasi tombol forgot password)
+if (isset($_POST["kirim_forgot"]) and !empty($_POST["email"])) {
+    $email = $_POST["email"];
+    $sql = "SELECT * FROM login where email = '$email'";
+    $result = mysqli_query($connection, $sql);
+    $num_row = mysqli_num_rows($result);
+
+    if ($num_row > 0) {
+
+        // Generate Random token where the token will send to the email
+        //Generate a random string.
+        $token = openssl_random_pseudo_bytes(4);
+
+        //Convert the binary data into hexadecimal representation.
+        $token = bin2hex($token);
+
+        $mail = new PHPMailer(true);
+
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'fabianjuliansyah89@gmail.com'; // Gmail kamu
+        $mail->Password = 'kssqdwepoedjaprx'; // Kode key dari google accunt App Password
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port = 465;
+
+        $mail->setFrom('fabianjuliansyah89@gmail.com'); // Gmail kamu
+        $mail->addAddress($_POST['email']); // Email tujuan
+        $mail->isHTML(true);
+        $mail->Subject = "Your Recovery Token Password";
+        $mail->Body = 'Copy this token to otp-page : ' . $token;
+
+        $mail->send();
+        echo "<script type='text/javascript'> alert('Code has been sent to your email address!'); document.location.href='otp-page.php';</script>";
+    } else {
+        $errors['email'] = "Sorry your email is not registered";
+    }
+}
+
+// Validasi Tombol OTP
+if (isset($_POST["kirim_otp"])) {
+    if (!empty($_POST["otp"])) {
+        // Ambil password adri inputan user
+        $password = $_POST["otp"];
+        // Cek password user
+        $number = preg_match('@[0-9]@', $password);
+        $uppercase = preg_match('@[A-Z]@', $password);
+        $lowercase = preg_match('@[a-z]@', $password);
+
+        if (strlen($password) < 6 || !$number || !$uppercase || !$lowercase) {
+            $errors['pass_strength'] = "Sorry your password is not match";
+        } else {
+
+        }
+    }
+}
