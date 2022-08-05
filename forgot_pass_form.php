@@ -19,7 +19,7 @@ require "validation.php";
     <div class="container">
         <!-- Action balik ke form ini aja ygy -->
         <form action="forgot_pass_form.php" method="POST" class="login-email">
-            <p class="login-text" style="font-size: 2rem; font-weight: 800;">Login</p>
+            <p class="login-text" style="font-size: 2rem; font-weight: 800;">Forgot Password</p>
             <?php
 // Cek apakah dari file validasi login terdapat error
 if (count($errors) > 0) {
@@ -43,6 +43,7 @@ if (count($errors) > 0) {
             </div>
             <p class="login-register-text">Already have an acount? <a href="login_Form.php">Back To Login</a></p>
             <br>
+            <p class="login-register-text"><a href="otp-page.php">Halaman OTP</a></p>
         </form>
     </div>
 </body>
