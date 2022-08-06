@@ -1,6 +1,7 @@
 <?php
 // Sambungkan dengan koneksi db di halaman connection
 require "connection.php";
+require "function.php";
 $errors = array();
 $success = array();
 
@@ -37,7 +38,7 @@ if (isset($_POST["kirim_login"])) {
                 header("Location:home.php");
                 exit();
             } else {
-                $errors["password"] = "Incorrect Email or Password";
+                $errors["password"] = "Incorrect Username or Password";
             }
         } else {
             $errors["username"] = "Username not exist! Please sign in first";
@@ -87,6 +88,35 @@ if (isset($_POST['kirim_regist'])) {
 }
 
 // (Validasi tombol forgot password)
+if (isset($_POST["kirim_forgot"])) {
+    // Ambil email dari inputan user
+    $email = mysqli_real_escape_string($connection, $_POST["email"]);
+
+    // Query kondisi = email
+    $sql = "SELECT * FROM login where email = '$email'";
+    $result = mysqli_query($connection, $sql);
+    $row = mysqli_fetch_assoc($result);
+    // Cek apakah data ada
+    // Jika tidak ada data maka
+    if ($num_row = mysqli_num_rows($result) < 1) {
+        $errors["email"] = "Email not found!";
+    }
+
+    // Kalau tidak ada error
+    if (empty($errors)) {
+        $token_ganti_password = password_hash((rand(0, 1000)), PASSWORD_DEFAULT);
+        $judul_email = "Halaman Konfirmasi Forgot Password";
+        $isi_email = "Copy the token : " . $token_ganti_password;
+        // Function kirim_email
+        kirim_email($email, $email, $judul_email, $isi_email);
+
+        $sql = "UPDATE login SET token_ganti_password = '$token_ganti_password' where email = '$email'";
+        mysqli_query($connection, $sql);
+        echo "<script type='text/javascript'> alert('Token has been sent to your email!'); document.location.href='change_password.php?=" . $row["id"] . "';</script>";
+
+    }
+
+}
 
 // (Validasi Tombol OTP)
 
