@@ -104,20 +104,58 @@ if (isset($_POST["kirim_forgot"])) {
 
     // Kalau tidak ada error
     if (empty($errors)) {
+        // Generate random token (FIX)
         $token_ganti_password = password_hash((rand(0, 1000)), PASSWORD_DEFAULT);
         $judul_email = "Halaman Konfirmasi Forgot Password";
         $isi_email = "Copy the token : " . $token_ganti_password;
         // Function kirim_email
         kirim_email($email, $email, $judul_email, $isi_email);
 
+        // Update token di db menjadi generate token dengan kondisi email yg diinput
         $sql = "UPDATE login SET token_ganti_password = '$token_ganti_password' where email = '$email'";
         mysqli_query($connection, $sql);
-        echo "<script type='text/javascript'> alert('Token has been sent to your email!'); document.location.href='change_password.php?=" . $row["id"] . "';</script>";
-
+        echo "<script type='text/javascript'> alert('Token has been sent to your email!'); document.location.href='change_password.php?';</script>";
     }
 
 }
 
-// (Validasi Tombol OTP)
+// (Validasi Tombol Password Baru)
+if (isset($_POST["kirim_new_password"])) {
+    // Ambil inputan dari user
+    $input_token = $_POST["token_confirm"];
+    $password = mysqli_real_escape_string($connection, $_POST["new_password"]);
+    $confirm_pass = mysqli_real_escape_string($connection, $_POST["password_confirm"]);
+    // Kalo textbox input token tidak kosong
+    if (!empty($input_token)) {
+        // Query sekuruh data berdasarkan token yang udah di ganti
+        $sql = "SELECT * FROM login WHERE token_ganti_password = '$input_token'";
+        $query = mysqli_query($connection, $sql);
+        $num_row = mysqli_num_rows($query);
 
-// (Validasi new password)
+        // Kalo ada data yg sama sesuai input token
+        if ($num_row > 0) {
+            // Fetch data dari db
+            $row = mysqli_fetch_assoc($query);
+            // Variabel token_db berisi token dari db
+            $token_db = $row["token_ganti_password"];
+            // Bandingin token yg diinput user sama di db
+            if ($input_token === $token_db) {
+                // Cek apakah password sm dgn confirm passwrd
+                if ($password === $confirm_pass) {
+                    // Hash password baru
+                    $password = mysqli_real_escape_string($connection, password_hash($_POST["new_password"], PASSWORD_DEFAULT));
+                    // Query update password
+                    $sql = "UPDATE login SET password = '$password' WHERE token_ganti_password = '$input_token'";
+                    $query = mysqli_query($connection, $sql);
+                    if ($query) {
+                        $success["password"] = "Password Succesfully Changes, Back to login please";
+                    } else {
+                        $errors["password"] = "Failed to update password";
+                    }
+                }
+            }
+        } else {
+            $errors["db_data"] = "Token is false";
+        }
+    }
+}
