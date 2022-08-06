@@ -21,8 +21,8 @@ require "validation.php";
 <body>
     <div class="container">
         <!-- Action balik ke form ini aja ygy -->
-        <form action="forgot_pass_form.php" method="POST" class="login-email">
-            <p class="login-text" style="font-size: 2rem; font-weight: 800;">Forgot Password</p>
+        <form action="new_password.php" method="POST" class="login-email">
+            <p class="login-text" style="font-size: 2rem; font-weight: 800;">New Password</p>
             <?php
 // Cek apakah dari file validasi login terdapat error
 if (count($errors) > 0) {
@@ -36,6 +36,19 @@ if (count($errors) > 0) {
     ?>
                         </div>
                         <?php
+} elseif (count($success) > 0) {
+    ?>
+
+        <div class="alert alert-success text-center">
+                            <?php
+// Jika ada error tampilan error
+    foreach ($success as $showsuccess) {
+        echo $showsuccess;
+    }
+    ?>
+                        </div>
+
+<?php
 }
 ?>
             <div class="input-group">
