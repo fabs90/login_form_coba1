@@ -33,17 +33,29 @@ if (count($errors) > 0) {
     ?>
                         </div>
                         <?php
+} elseif (count($success) > 0) {
+    ?>
+
+        <div class="alert alert-success text-center">
+                            <?php
+// Jika ada error tampilan error
+    foreach ($success as $showsuccess) {
+        echo $showsuccess;
+    }
+    ?>
+                        </div>
+
+<?php
 }
 ?>
             <div class="input-group">
-                <input type="text" placeholder="Email" name="email" value="" required>
+                <input type="text" placeholder="Input Your Email" name="email" value="" required>
             </div>
             <div class="input-group">
                 <button name="kirim_forgot" class="btn">Send</button>
             </div>
             <p class="login-register-text">Already have an acount? <a href="login_Form.php">Back To Login</a></p>
             <br>
-            <p class="login-register-text"><a href="otp-page.php">Halaman OTP</a></p>
         </form>
     </div>
 </body>
