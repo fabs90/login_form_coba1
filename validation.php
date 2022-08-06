@@ -1,12 +1,8 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-require 'phpmailer/src/Exception.php';
-require 'phpmailer/src/PHPMailer.php';
-require 'phpmailer/src/SMTP.php';
-
 // Sambungkan dengan koneksi db di halaman connection
 require "connection.php";
 $errors = array();
+$success = array();
 
 // (Validasi Tombol Login)
 // Jika apakah tombol button kirim sudah di klik
@@ -91,58 +87,7 @@ if (isset($_POST['kirim_regist'])) {
 }
 
 // (Validasi tombol forgot password)
-if (isset($_POST["kirim_forgot"]) and !empty($_POST["email"])) {
-    $email = $_POST["email"];
-    $sql = "SELECT * FROM login where email = '$email'";
-    $result = mysqli_query($connection, $sql);
-    $num_row = mysqli_num_rows($result);
 
-    if ($num_row > 0) {
+// (Validasi Tombol OTP)
 
-        // Generate Random token where the token will send to the email
-        //Generate a random string.
-        $token = openssl_random_pseudo_bytes(4);
-
-        //Convert the binary data into hexadecimal representation.
-        $token = bin2hex($token);
-
-        $mail = new PHPMailer(true);
-
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'fabianjuliansyah89@gmail.com'; // Gmail kamu
-        $mail->Password = 'kssqdwepoedjaprx'; // Kode key dari google accunt App Password
-        $mail->SMTPSecure = 'ssl';
-        $mail->Port = 465;
-
-        $mail->setFrom('fabianjuliansyah89@gmail.com'); // Gmail kamu
-        $mail->addAddress($_POST['email']); // Email tujuan
-        $mail->isHTML(true);
-        $mail->Subject = "Your Recovery Token Password";
-        $mail->Body = 'Copy this token to otp-page : ' . $token;
-
-        $mail->send();
-        echo "<script type='text/javascript'> alert('Code has been sent to your email address!'); document.location.href='otp-page.php';</script>";
-    } else {
-        $errors['email'] = "Sorry your email is not registered";
-    }
-}
-
-// Validasi Tombol OTP
-if (isset($_POST["kirim_otp"])) {
-    if (!empty($_POST["otp"])) {
-        // Ambil password adri inputan user
-        $password = $_POST["otp"];
-        // Cek password user
-        $number = preg_match('@[0-9]@', $password);
-        $uppercase = preg_match('@[A-Z]@', $password);
-        $lowercase = preg_match('@[a-z]@', $password);
-
-        if (strlen($password) < 6 || !$number || !$uppercase || !$lowercase) {
-            $errors['pass_strength'] = "Sorry your password is not match";
-        } else {
-
-        }
-    }
-}
+// (Validasi new password)
