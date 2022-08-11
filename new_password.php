@@ -49,10 +49,10 @@ if (count($errors) > 0) {
 }
 ?>
             <div class="input-group">
-                <input type="text" placeholder="New Password" name="new_password" value="" required>
+                <input type="password" placeholder="New Password" name="new_password" value="" required>
             </div>
             <div class="input-group">
-                <input type="text" placeholder="Confirm Password" name="confirm_password" value="" required>
+                <input type="password" placeholder="Confirm Password" name="confirm_password" value="" required>
             </div>
             <div class="input-group">
                 <button name="kirim_newPass" class="btn">Send</button>
