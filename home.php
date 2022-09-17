@@ -45,7 +45,7 @@ if (!isset($_SESSION["username"])) {
 </head>
 <body>
     <nav class="navbar">
-    <a class="navbar-brand" href="#">Brand name</a>
+    <a class="navbar-brand" href="#">Home</a>
     <button type="button" class="btn btn-light"><a href="logout.php">Logout</a></button>
     </nav>
     <h1>Welcome <?php echo $_SESSION['username'] ?></h1>
