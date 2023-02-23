@@ -76,7 +76,7 @@ body {
 }
 
 .container .login-email .input-group .btn:hover {
-  transform: translateY(-5px);
+  transform: translateY(5px);
   background: #6c5ce7;
 }
 
